@@ -6,6 +6,10 @@ namespace Data
     {
         public IUserRepository User { get; }
         public IProjectRepository Project { get; }
+        public IIssueRepository Issue { get; }
+        public IStatusRepository Status { get; }
+        public IPriorityRepository Priority { get; }
+        public ITypeRepository Type { get; }
 
         Task<int> SaveChanges();
     }

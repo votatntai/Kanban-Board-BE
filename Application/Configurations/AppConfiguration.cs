@@ -13,6 +13,10 @@ namespace Application.Configurations
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IIssueService, IssueService>();
+            services.AddScoped<IStatusService, StatusService>();
+            services.AddScoped<IPriorityService, PriorityService>();
+            services.AddScoped<ITypeService, TypeService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }

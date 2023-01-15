@@ -13,7 +13,8 @@ namespace Data.Entities
             LogWorks = new HashSet<LogWork>();
             ProjectDefaultAssignees = new HashSet<Project>();
             ProjectLeaders = new HashSet<Project>();
-            UserRoles = new HashSet<UserRole>();
+            Projects = new HashSet<Project>();
+            Roles = new HashSet<Role>();
         }
 
         public Guid Id { get; set; }
@@ -29,6 +30,8 @@ namespace Data.Entities
         public virtual ICollection<LogWork> LogWorks { get; set; }
         public virtual ICollection<Project> ProjectDefaultAssignees { get; set; }
         public virtual ICollection<Project> ProjectLeaders { get; set; }
-        public virtual ICollection<UserRole> UserRoles { get; set; }
+
+        public virtual ICollection<Project> Projects { get; set; }
+        public virtual ICollection<Role> Roles { get; set; }
     }
 }

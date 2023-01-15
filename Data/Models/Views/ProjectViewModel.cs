@@ -13,7 +13,9 @@ namespace Data.Models.Views
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public UserViewModel Leader { get; set; } = null!;
-        public UserViewModel DefaultAssignee { get; set; } = null!;
+        public UserViewModel? DefaultAssignee { get; set; }
+        public ICollection<StatusViewModel> Statuses { get; set; } = null!;
+        public ICollection<UserViewModel> Members { get; set; } = null!;
         public DateTime CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
         public bool IsClose { get; set; }

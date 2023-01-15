@@ -27,7 +27,7 @@ namespace Application.Configurations.Middleware
                 var isValid = false;
                 roles.ForEach(role =>
                 {
-                    if (Roles.Contains(role.ToLower()))
+                    if (Roles == null || Roles.Count == 0 || Roles.Contains(role.ToLower()))
                     {
                         isValid = true;
                     }

@@ -7,13 +7,13 @@ namespace Data.Entities
     {
         public Role()
         {
-            UserRoles = new HashSet<UserRole>();
+            Users = new HashSet<User>();
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
 
-        public virtual ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

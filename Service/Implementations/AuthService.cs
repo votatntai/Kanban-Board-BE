@@ -27,8 +27,8 @@ namespace Service.Implementations
 
         public async Task<AuthViewModel> AuthenticatedUser(AuthRequest auth)
         {
-            var user = await _userRepository.GetMany(user => user.Username.Equals(auth.Username) && user.Password.Equals(auth.Password))
-                .Include(user => user.UserRoles).ThenInclude(userRole => userRole.Role).FirstOrDefaultAsync();
+            var user = await _userRepository.GetMany(user => user.Email.Equals(auth.Email) && user.Password.Equals(auth.Password))
+                .Include(user => user.Roles).FirstOrDefaultAsync();
             if (user != null)
             {
                 var token = GenerateJwtToken(new AuthModel
@@ -36,7 +36,7 @@ namespace Service.Implementations
                     Id = user.Id,
                     Username = user.Username,
                     Status = "Activated",
-                    Roles = user.UserRoles.Select(role => role.Role!.Name).ToArray()
+                    Roles = user.Roles.Select(role => role.Name).ToArray()
                 });
                 return new AuthViewModel
                 {
@@ -44,7 +44,7 @@ namespace Service.Implementations
                     Username = user.Username,
                     Email = user.Email,
                     Name = user.Name,
-                    Roles = user.UserRoles.Select(role => role.Role!.Name).ToArray(),
+                    Roles = user.Roles.Select(role => role.Name).ToArray(),
                     Token = token
                 };
             }
@@ -54,14 +54,14 @@ namespace Service.Implementations
         public async Task<AuthModel?> GetUserById(Guid id)
         {
             var user = await _userRepository.GetMany(user => user.Id.Equals(id))
-                .Include(user => user.UserRoles).ThenInclude(userRole => userRole.Role).FirstOrDefaultAsync();
+                .Include(user => user.Roles).FirstOrDefaultAsync();
             if (user != null)
             {
                 return new AuthModel
                 {
                     Id = user.Id,
                     Username = user.Username,
-                    Roles = user.UserRoles.Select(role => role.Role!.Name).ToArray(),
+                    Roles = user.Roles.Select(role => role.Name).ToArray(),
                     Status = "Activated",
                 };
             }

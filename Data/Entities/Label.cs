@@ -7,8 +7,10 @@ namespace Data.Entities
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
-        public Guid IssueId { get; set; }
+        public Guid ProjectId { get; set; }
+        public Guid? IssueId { get; set; }
 
-        public virtual Issue Issue { get; set; } = null!;
+        public virtual Issue? Issue { get; set; }
+        public virtual Project Project { get; set; } = null!;
     }
 }

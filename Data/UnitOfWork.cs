@@ -10,6 +10,10 @@ namespace Data
 
         private IUserRepository _user = null!;
         private IProjectRepository _project = null!;
+        private IIssueRepository _issue = null!;
+        private IStatusRepository _status = null!;
+        private IPriorityRepository _priority = null!;
+        private ITypeRepository _type = null!;
         public UnitOfWork(KanbanContext context)
         {
             _context = context;
@@ -21,6 +25,23 @@ namespace Data
         public IProjectRepository Project
         {
             get { return _project ??= new ProjectRepository(_context); }
+        }   
+        public IIssueRepository Issue
+        {
+            get { return _issue ??= new IssueRepository(_context); }
+        }
+
+        public IStatusRepository Status
+        {
+            get { return _status ??= new StatusRepository(_context); }
+        }    
+        public IPriorityRepository Priority
+        {
+            get { return _priority ??= new PriorityRepository(_context); }
+        }      
+        public ITypeRepository Type
+        {
+            get { return _type ??= new TypeRepository(_context); }
         }
 
         public async Task<int> SaveChanges()

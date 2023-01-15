@@ -22,7 +22,6 @@ Go
 Create Table UserRole (
 	UserId uniqueidentifier foreign key references [User](Id),
 	RoleId uniqueidentifier foreign key references [Role](Id),
-	Description nvarchar(max),
 	Primary key (UserId, RoleId)
 )
 Go
@@ -34,50 +33,62 @@ Create Table Project(
 	DefaultAssigneeId uniqueidentifier foreign key references [User](Id),
 	CreateAt datetime not null default getdate(),
 	UpdateAt datetime,
+	LastActivity datetime,
 	IsClose bit not null default 0
+)
+Go
+Create Table ProjectMember(
+	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
+	UserId uniqueidentifier foreign key references [User](Id) not null,
+	Primary key (ProjectId, UserId)
 )
 Go
 Create Table [Type] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
+	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
 	Description nvarchar(max),
-	IsDefault bit not null default 0
 )
 Go
 Create Table [Status] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
+	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
+	Position int not null,
+	IsFirst bit not null default 0,
+	IsLast bit not null default 0,
 	Description nvarchar(max),
-	IsDefault bit not null default 0
 )
 Go
 Create Table [Priority] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
+	Value int not null unique,
 	Description nvarchar(max),
-	IsDefault bit not null default 0
 )
 Go
 Create Table [Issue] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
 	Description nvarchar(max),
-	AssigneeId uniqueidentifier foreign key references [User](Id) not null,
-	EstimateTime int not null default 0,
+	AssigneeId uniqueidentifier foreign key references [User](Id),
+	EstimateTime int default 0,
 	PriorityId uniqueidentifier foreign key references [Priority](Id) not null,
 	StatusId uniqueidentifier foreign key references [Status](Id) not null,
 	TypeId uniqueidentifier foreign key references [Type](Id) not null,
-	DueDate datetime not null,
+	DueDate datetime,
+	Position int not null,
+	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
 	ReporterId uniqueidentifier foreign key references [User](Id) not null,
 	CreateAt datetime not null default getdate(),
 	UpdateAt datetime,
+	ResolveAt datetime,
 	IsClose bit not null default 0
 )
 Go
 Create Table [ChildIssue] (
 	IssueId uniqueidentifier foreign key references [Issue](Id) not null,
 	ChildId uniqueidentifier foreign key references [Issue](Id) unique not null,
-	Description nvarchar(max),
 	Primary key (IssueId, ChildId)
 )
 Go
@@ -98,7 +109,8 @@ Go
 Create Table [Label] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
-	IssueId uniqueidentifier foreign key references [Issue](Id) not null,
+	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
+	IssueId uniqueidentifier foreign key references [Issue](Id),
 )
 Go
 Create Table [Comment] (

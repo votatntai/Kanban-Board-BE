@@ -12,5 +12,6 @@ namespace Data.Models.Requests.Update
         public string? Description { get; set; }
         public Guid? LeaderId { get; set; }
         public Guid? DefaultAssigneeId { get; set; }
+        public bool? IsClose { get; set; }
     }
 }

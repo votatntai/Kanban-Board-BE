@@ -45,7 +45,8 @@ namespace Service.Implementations
             {
                 _projectRepository.Remove(project);
                 var result = await _unitOfWork.SaveChanges();
-                if (result > 0) {
+                if (result > 0)
+                {
                     return true;
                 }
             }
@@ -54,7 +55,9 @@ namespace Service.Implementations
 
         public async Task<ProjectViewModel> GetProject(Guid id)
         {
-            return await _projectRepository.GetMany(project => project.Id.Equals(id)).Select(project => new ProjectViewModel
+            return await _projectRepository.GetMany(project => project.Id.Equals(id))
+                .Include(project => project.Statuses).ThenInclude(status => status.Issues)
+                .Select(project => new ProjectViewModel
             {
                 Id = project.Id,
                 CreateAt = project.CreateAt,
@@ -75,13 +78,61 @@ namespace Service.Implementations
                     Name = project.DefaultAssignee.Name,
                     Username = project.DefaultAssignee.Username,
                     Email = project.DefaultAssignee.Email,
-                } : null!
-            }).FirstOrDefaultAsync() ?? null!;
+                } : null!,
+                Statuses = project.Statuses.Select(status => new StatusViewModel
+                {
+                    Id = status.Id,
+                    Description= status.Description,
+                    Name= status.Name,
+                    Position = status.Position,
+                    Issues = status.Issues.Select(issue => new IssueViewModel
+                    {
+                        Id = issue.Id,
+                        Name= issue.Name,
+                        Description= issue.Description,
+                        CreateAt= issue.CreateAt,
+                        DueDate= issue.DueDate,
+                        EstimateTime= issue.EstimateTime,
+                        IsClose= issue.IsClose,
+                        UpdateAt= issue.UpdateAt,
+                        Assignee = issue.Assignee != null ? new UserViewModel
+                        {
+                            Id = issue.Assignee.Id,
+                            Email = issue.Assignee.Email,
+                            Name = issue.Assignee.Name,
+                            Username = issue.Assignee.Username
+                        } : null!,
+                        PriorityId = issue.PriorityId,
+                        ProjectId = issue.Project.Id,
+                        Position = issue.Position,
+                        Reporter = new UserViewModel
+                        {
+                            Id = issue.Reporter.Id,
+                            Email = issue.Reporter.Email,
+                            Name = issue.Reporter.Name,
+                            Username = issue.Reporter.Username
+                        },
+                        StatusId = issue.StatusId,
+                        TypeId = issue.TypeId,
+                    }).OrderBy(issue => issue.Position).ToList(),
+                }).OrderBy(status => status.Position).ToList(),
+                    Members = project.Users.Select(user => new UserViewModel
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        Name = user.Name,
+                        Username = user.Username
+                    }).ToList()
+                }).FirstOrDefaultAsync() ?? null!;
         }
 
         public async Task<ICollection<ProjectViewModel>> GetProjects(string? name)
         {
-            return await _projectRepository.GetMany(project => project.Name.Contains(name ?? "")).Select(project => new ProjectViewModel
+            return await _projectRepository
+                .GetMany(project => project.Name.Contains(name ?? ""))
+                .Include(project => project.Statuses).ThenInclude(status => status.Issues)
+                .ThenInclude(issue => issue.Project)
+                .Select(project => new ProjectViewModel
             {
                 Id = project.Id,
                 CreateAt = project.CreateAt,
@@ -102,7 +153,50 @@ namespace Service.Implementations
                     Name = project.DefaultAssignee.Name,
                     Username = project.DefaultAssignee.Username,
                     Email = project.DefaultAssignee.Email,
-                } : null!
+                } : null!,
+                Statuses = project.Statuses.Select(status => new StatusViewModel
+                {
+                    Id = status.Id,
+                    Description = status.Description,
+                    Name = status.Name,
+                    Issues = status.Issues.Select(issue => new IssueViewModel
+                    {
+                        Id = issue.Id,
+                        Name = issue.Name,
+                        Description = issue.Description,
+                        CreateAt = issue.CreateAt,
+                        DueDate = issue.DueDate,
+                        EstimateTime = issue.EstimateTime,
+                        IsClose = issue.IsClose,
+                        UpdateAt = issue.UpdateAt,
+                        Assignee = issue.Assignee != null ? new UserViewModel
+                        {
+                            Id = issue.Assignee.Id,
+                            Email = issue.Assignee.Email,
+                            Name = issue.Assignee.Name,
+                            Username = issue.Assignee.Username
+                        } : null!,
+                        PriorityId = issue.PriorityId,
+                        ProjectId = issue.Project.Id,
+                        Position = issue.Position,
+                        Reporter = new UserViewModel
+                        {
+                            Id = issue.Reporter.Id,
+                            Email = issue.Reporter.Email,
+                            Name = issue.Reporter.Name,
+                            Username = issue.Reporter.Username
+                        },
+                        StatusId = issue.StatusId,
+                        TypeId = issue.TypeId,
+                    }).OrderBy(issue => issue.Position).ToList(),
+                }).OrderBy(status => status.Position).ToList(),
+                    Members = project.Users.Select(user => new UserViewModel
+                {
+                    Id= user.Id,
+                    Email= user.Email,
+                    Name = user.Name,
+                    Username = user.Username
+                }).ToList()
             }).ToListAsync();
         }
 
@@ -115,6 +209,7 @@ namespace Service.Implementations
                 if (model.Description != null) project.Description = model.Description;
                 if (model.DefaultAssigneeId != null) project.DefaultAssigneeId = model.DefaultAssigneeId;
                 if (model.LeaderId != null) project.LeaderId = (Guid)model.LeaderId;
+                if (model.IsClose != null) project.IsClose = (bool)model.IsClose;
                 project.UpdateAt = DateTime.UtcNow;
                 _projectRepository.Update(project);
                 var result = await _unitOfWork.SaveChanges();
