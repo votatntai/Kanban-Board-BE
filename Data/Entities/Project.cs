@@ -9,9 +9,10 @@ namespace Data.Entities
         {
             Issues = new HashSet<Issue>();
             Labels = new HashSet<Label>();
+            ProjectMembers = new HashSet<ProjectMember>();
+            ProjectPriorities = new HashSet<ProjectPriority>();
             Statuses = new HashSet<Status>();
             Types = new HashSet<Type>();
-            Users = new HashSet<User>();
         }
 
         public Guid Id { get; set; }
@@ -28,9 +29,9 @@ namespace Data.Entities
         public virtual User Leader { get; set; } = null!;
         public virtual ICollection<Issue> Issues { get; set; }
         public virtual ICollection<Label> Labels { get; set; }
+        public virtual ICollection<ProjectMember> ProjectMembers { get; set; }
+        public virtual ICollection<ProjectPriority> ProjectPriorities { get; set; }
         public virtual ICollection<Status> Statuses { get; set; }
         public virtual ICollection<Type> Types { get; set; }
-
-        public virtual ICollection<User> Users { get; set; }
     }
 }

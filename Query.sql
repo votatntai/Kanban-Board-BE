@@ -40,6 +40,8 @@ Go
 Create Table ProjectMember(
 	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
 	UserId uniqueidentifier foreign key references [User](Id) not null,
+	JoinAt datetime not null,
+	IsOwner bit not null,
 	Primary key (ProjectId, UserId)
 )
 Go
@@ -57,20 +59,30 @@ Create Table [Status] (
 	Position int not null,
 	IsFirst bit not null default 0,
 	IsLast bit not null default 0,
+	Limit int,
 	Description nvarchar(max),
 )
 Go
 Create Table [Priority] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
-	Value int not null unique,
+	Value int not null,
 	Description nvarchar(max),
+)
+Go
+Create Table [ProjectPriority] (
+	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
+	PriorityId uniqueidentifier foreign key references [Priority](Id) not null,
+	Description nvarchar(max),
+	Primary key (ProjectId, PriorityId)
 )
 Go
 Create Table [Issue] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
 	Description nvarchar(max),
+	IsChild bit not null default 0,
+	ParentId uniqueidentifier foreign key references [Issue](Id),
 	AssigneeId uniqueidentifier foreign key references [User](Id),
 	EstimateTime int default 0,
 	PriorityId uniqueidentifier foreign key references [Priority](Id) not null,
@@ -84,12 +96,6 @@ Create Table [Issue] (
 	UpdateAt datetime,
 	ResolveAt datetime,
 	IsClose bit not null default 0
-)
-Go
-Create Table [ChildIssue] (
-	IssueId uniqueidentifier foreign key references [Issue](Id) not null,
-	ChildId uniqueidentifier foreign key references [Issue](Id) unique not null,
-	Primary key (IssueId, ChildId)
 )
 Go
 Create Table [Attachment] (
@@ -110,7 +116,14 @@ Create Table [Label] (
 	Id uniqueidentifier primary key,
 	Name nvarchar(256) not null,
 	ProjectId uniqueidentifier foreign key references [Project](Id) not null,
-	IssueId uniqueidentifier foreign key references [Issue](Id),
+	UpdateAt datetime,
+)
+Go
+Create Table [IssueLabel] (
+	IssueId uniqueidentifier foreign key references [Issue](Id) not null,
+	LabelId uniqueidentifier foreign key references [Label](Id) not null,
+	UpdateAt datetime,
+	Primary key (IssueId, LabelId)
 )
 Go
 Create Table [Comment] (

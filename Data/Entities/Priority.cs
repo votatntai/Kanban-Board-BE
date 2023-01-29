@@ -8,6 +8,7 @@ namespace Data.Entities
         public Priority()
         {
             Issues = new HashSet<Issue>();
+            ProjectPriorities = new HashSet<ProjectPriority>();
         }
 
         public Guid Id { get; set; }
@@ -16,5 +17,6 @@ namespace Data.Entities
         public string? Description { get; set; }
 
         public virtual ICollection<Issue> Issues { get; set; }
+        public virtual ICollection<ProjectPriority> ProjectPriorities { get; set; }
     }
 }

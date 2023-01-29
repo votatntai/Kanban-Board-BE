@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Models.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace Data.Models.Requests.Update
         public Guid? TypeId { get; set; }
         public DateTime? DueDate { get; set; }
         public Guid? ReporterId { get; set; }
+        public ICollection<LabelViewModel>? Labels { get; set; } = null!;
         public bool? IsClose { get; set; }
     }
 }

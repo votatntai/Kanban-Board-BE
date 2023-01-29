@@ -8,5 +8,9 @@ namespace Data.Models.Views
 {
     public class LabelViewModel
     {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = null!;
+        public Guid ProjectId { get; set; }
+        public ICollection<IssueViewModel>? Issues { get; set; }
     }
 }

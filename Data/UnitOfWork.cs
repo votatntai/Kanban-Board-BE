@@ -13,6 +13,8 @@ namespace Data
         private IIssueRepository _issue = null!;
         private IStatusRepository _status = null!;
         private IPriorityRepository _priority = null!;
+        private ILabelRepository _label = null!;
+        private IIssueLabelRepository _issueLabel = null!;
         private ITypeRepository _type = null!;
         public UnitOfWork(KanbanContext context)
         {
@@ -38,7 +40,15 @@ namespace Data
         public IPriorityRepository Priority
         {
             get { return _priority ??= new PriorityRepository(_context); }
-        }      
+        }
+        public ILabelRepository Label
+        {
+            get { return _label ??= new LabelRepository(_context); }
+        }
+        public IIssueLabelRepository IssueLabel
+        {
+            get { return _issueLabel ??= new IssueLabelRepository(_context); }
+        }
         public ITypeRepository Type
         {
             get { return _type ??= new TypeRepository(_context); }

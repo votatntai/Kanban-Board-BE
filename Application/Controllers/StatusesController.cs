@@ -1,6 +1,7 @@
 ﻿using Application.Configurations.Middleware;
 using Data.Models.Internal;
 using Data.Models.Requests.Create;
+using Data.Models.Requests.Get;
 using Data.Models.Requests.Update;
 using Data.Models.Views;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,19 @@ namespace Application.Controllers
         public StatusesController(IStatusService statusService)
         {
             _statusService = statusService;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(ICollection<StatusViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ICollection<StatusViewModel>>> GetStatuses([FromQuery] StatusRequest filter)
+        {
+            var statuses = await _statusService.GetStatuses(filter);
+            if (statuses is null || statuses.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(statuses);
         }
 
         [HttpGet]

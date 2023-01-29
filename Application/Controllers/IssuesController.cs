@@ -50,7 +50,6 @@ namespace Application.Controllers
         }
 
         [HttpPost]
-        [Authorize("Admin")]
         [ProducesResponseType(typeof(IssueViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IssueViewModel>> CreateIssue([FromBody] CreateIssueRequestModel issue)
@@ -62,6 +61,27 @@ namespace Application.Controllers
             try
             {
                 var result = await _issueService.CreateIssue(issue);
+                return CreatedAtAction(nameof(GetIssue), new { id = result.Id }, result);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception);
+            }
+        }
+
+        [HttpPost]
+        [Route("child")]
+        [ProducesResponseType(typeof(IssueViewModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IssueViewModel>> CreateChildIssue([FromBody] CreateIssueRequestModel issue)
+        {
+            if (issue is null)
+            {
+                return BadRequest(new());
+            }
+            try
+            {
+                var result = await _issueService.CreateChildIssue(issue);
                 return CreatedAtAction(nameof(GetIssue), new { id = result.Id }, result);
             }
             catch (Exception exception)
@@ -83,6 +103,32 @@ namespace Application.Controllers
             try
             {
                 var result = await _issueService.UpdateIssues(issues);
+                if (result is not null)
+                {
+                    return StatusCode(StatusCodes.Status201Created, result);
+                }
+                return BadRequest();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception);
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        [ProducesResponseType(typeof(IssueViewModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IssueViewModel>>
+         UpdatedeIssue([FromRoute] Guid id, [FromBody] UpdateIssueRequestModel issue)
+        {
+            if (issue is null)
+            {
+                return BadRequest(new());
+            }
+            try
+            {
+                var result = await _issueService.UpdateIssue(id, issue);
                 if (result is not null)
                 {
                     return StatusCode(StatusCodes.Status201Created, result);

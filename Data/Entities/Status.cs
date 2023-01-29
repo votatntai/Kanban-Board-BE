@@ -16,6 +16,7 @@ namespace Data.Entities
         public int Position { get; set; }
         public bool IsFirst { get; set; }
         public bool IsLast { get; set; }
+        public int? Limit { get; set; }
         public string? Description { get; set; }
 
         public virtual Project Project { get; set; } = null!;
