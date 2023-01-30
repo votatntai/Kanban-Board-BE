@@ -4,6 +4,7 @@ using Data.Models.Requests.Create;
 using Data.Models.Requests.Update;
 using Data.Models.Views;
 using Microsoft.AspNetCore.Mvc;
+using Service.Implementations;
 using Service.Interfaces;
 
 namespace Application.Controllers
@@ -94,7 +95,7 @@ namespace Application.Controllers
         [ProducesResponseType(typeof(ICollection<IssueViewModel>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ICollection<IssueViewModel>>>
-         UpdatedeIssues([FromBody] ICollection<UpdateIssueRequestModel> issues)
+         UpdateIssues([FromBody] ICollection<UpdateIssueRequestModel> issues)
         {
             if (issues is null)
             {
@@ -139,6 +140,15 @@ namespace Application.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, exception);
             }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<bool>> DeleteIssue([FromRoute] Guid id)
+        {
+            return await _issueService.DeleteIssue(id) ? Ok(true) : BadRequest();
         }
     }
 }

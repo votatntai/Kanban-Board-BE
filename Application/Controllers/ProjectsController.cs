@@ -71,6 +71,24 @@ namespace Application.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("member")]
+        //[Authorize]
+        [ProducesResponseType(typeof(MemberViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<MemberViewModel>> AddMember(Guid projectId, Guid memberId)
+        {
+            try
+            {
+                var member = await _projectService.AddMember(projectId, memberId);
+                return member != null ? Ok(member) : BadRequest();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception);
+            }
+        }
+
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(typeof(ProjectViewModel), StatusCodes.Status201Created)]

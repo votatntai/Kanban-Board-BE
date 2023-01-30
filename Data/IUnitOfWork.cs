@@ -11,6 +11,8 @@ namespace Data
         public IPriorityRepository Priority { get; }
         public ILabelRepository Label { get; }
         public IIssueLabelRepository IssueLabel { get; }
+        public IProjectMemberRepository ProjectMember { get; }
+
         public ITypeRepository Type { get; }
 
         Task<int> SaveChanges();

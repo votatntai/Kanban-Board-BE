@@ -14,11 +14,13 @@ namespace Service.Implementations
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IPriorityRepository _priorityRepository;
+        private readonly IProjectMemberRepository _projectMemberRepository;
 
         public ProjectService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             _projectRepository = unitOfWork.Project;
             _priorityRepository = unitOfWork.Priority;
+            _projectMemberRepository = unitOfWork.ProjectMember;
         }
 
         public async Task<ProjectViewModel> CreateProject(CreateProjectRequestModel model, Guid leaderId)
@@ -135,6 +137,34 @@ namespace Service.Implementations
                 }
             }
             return false;
+        }
+
+        public async Task<MemberViewModel> AddMember(Guid projectId, Guid memberId)
+        {
+            var projectMember = new ProjectMember
+            {
+                ProjectId = projectId,
+                UserId = memberId,
+                IsOwner = false,
+                JoinAt= DateTime.Now
+            };
+            _projectMemberRepository.Add(projectMember);
+            var result = await _unitOfWork.SaveChanges();
+            if(result > 0)
+            {
+                return await _projectMemberRepository.GetMany(projectMember => 
+                projectMember.ProjectId.Equals(projectId) &&
+                projectMember.UserId.Equals(memberId)).Select(member => new MemberViewModel
+                {
+                    Id = member.User.Id,
+                    Email = member.User.Email,
+                    Name= member.User.Name,
+                    Username= member.User.Username,
+                    IsOwner= member.IsOwner,
+                    JoinAt = member.JoinAt,
+                }) .FirstOrDefaultAsync() ?? null!;
+            }
+            return null!;
         }
 
         public async Task<ProjectViewModel> GetProject(Guid id)

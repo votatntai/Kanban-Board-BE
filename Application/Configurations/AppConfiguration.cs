@@ -17,6 +17,7 @@ namespace Application.Configurations
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IPriorityService, PriorityService>();
             services.AddScoped<ITypeService, TypeService>();
+            services.AddScoped<ILabelService, LabelService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }

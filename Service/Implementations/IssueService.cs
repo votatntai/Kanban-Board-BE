@@ -97,21 +97,6 @@ namespace Service.Implementations
             return null!;
         }
 
-        public async Task<bool> DeleteIssue(Guid id)
-        {
-            var issue = await _issueRepository.FirstOrDefaultAsync(issue => issue.Id.Equals(id));
-            if (issue != null)
-            {
-                _issueRepository.Remove(issue);
-                var result = await _unitOfWork.SaveChanges();
-                if (result > 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public async Task<IssueViewModel> GetIssue(Guid id)
         {
             return await _issueRepository.GetMany(issue => issue.Id.Equals(id))
@@ -389,5 +374,30 @@ namespace Service.Implementations
             }
             return null!;
         }
+
+        public async Task<bool> DeleteIssue(Guid id)
+        {
+            var result = false;
+            var issue = await _issueRepository.GetMany(issue => issue.Id.Equals(id)).Include(issue => issue.Project)
+                .Include(issue => issue.IssueLabels).FirstOrDefaultAsync();
+            if (issue != null)
+            {
+                var childIssues = await _issueRepository.GetMany(childIssue => childIssue.ParentId.Equals(issue.Id))
+                    .Include(childIssue => childIssue.IssueLabels).ToListAsync();
+
+                issue.Project.LastActivity = DateTime.Now;
+                foreach(var childIssue in childIssues)
+                {
+                    _issueLabelRepository.RemoveRange(childIssue.IssueLabels);
+                }
+                _issueLabelRepository.RemoveRange(issue.IssueLabels);
+                _issueRepository.Update(issue);
+                _issueRepository.RemoveRange(childIssues);
+                _issueRepository.Remove(issue);
+                result = await _unitOfWork.SaveChanges() > 0;
+            }
+            return result;
+        }
+
     }
 }

@@ -191,6 +191,7 @@ namespace Service.Implementations
                 foreach (var model in models)
                 {
                     var status = await _statusRepository.GetMany(status => status.Id.Equals(model.Id))
+                        .Include(status => status.Project)
                         .Include(status => status.Issues).ThenInclude(issue => issue.Project)
                         .Include(status => status.Issues).ThenInclude(issue => issue.IssueLabels).ThenInclude(issueLabel => issueLabel.Label)
                         .FirstOrDefaultAsync();
