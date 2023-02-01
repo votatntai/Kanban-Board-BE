@@ -113,6 +113,113 @@ namespace Service.Implementations
                     Name = issue.Name,
                     EstimateTime = issue.EstimateTime,
                     DueDate = issue.DueDate,
+                    LogWorks = issue.LogWorks.Select(logWork => new LogWorkViewModel
+                    {
+                        Id = logWork.Id,
+                        Description = logWork.Description,
+                        IssueId = logWork.IssueId,
+                        RemainingTime = logWork.RemainingTime,
+                        SpentTime = logWork.SpentTime,
+                        User = new UserViewModel
+                        {
+                            Id = logWork.User.Id,
+                            Email = logWork.User.Email,
+                            Name = logWork.User.Name,
+                            Username = logWork.User.Username
+                        },
+                        CreateAt = logWork.CreateAt,
+                    }).ToList(),
+                    ChildIssues = issue.InverseParent.Select(child => new ChildIssueViewModel
+                    {
+                        Id = child.Id,
+                        CreateAt = child.CreateAt,
+                        UpdateAt = child.UpdateAt,
+                        Position = child.Position,
+                        Description = child.Description,
+                        IsClose = child.IsClose,
+                        IsChild = child.IsChild,
+                        Name = child.Name,
+                        Comments = child.Comments.Select(comment => new CommentViewModel
+                        {
+                            Id = comment.Id,
+                            Content = comment.Content,
+                            CreateAt = comment.CreateAt,
+                            User = new UserViewModel
+                            {
+                                Id = comment.User.Id,
+                                Email = comment.User.Email,
+                                Name = comment.User.Name,
+                                Username = comment.User.Username
+                            },
+                            IssueId = comment.IssueId
+                        }).ToList(),
+                        Assignee = child.Assignee != null ? new UserViewModel
+                        {
+                            Id = child.Assignee.Id,
+                            Email = child.Assignee.Email,
+                            Name = child.Assignee.Name,
+                            Username = child.Assignee.Username
+                        } : null!,
+                        ProjectId = child.Project.Id,
+                        Reporter = new UserViewModel
+                        {
+                            Id = child.Reporter.Id,
+                            Email = child.Reporter.Email,
+                            Name = child.Reporter.Name,
+                            Username = child.Reporter.Username
+                        },
+                        Priority = new PriorityViewModel
+                        {
+                            Id = child.Priority.Id,
+                            Description = child.Priority.Description,
+                            Name = child.Priority.Name,
+                            Value = child.Priority.Value
+                        },
+                        Status = new StatusViewModel
+                        {
+                            Id = child.Status.Id,
+                            Name = child.Status.Name,
+                            Description = child.Status.Description,
+                            IsFirst = child.Status.IsFirst,
+                            IsLast = child.Status.IsLast,
+                            Limit = child.Status.Limit,
+                            Position = child.Status.Position
+                        },
+                        Type = new TypeViewModel
+                        {
+                            Id = child.Type.Id,
+                            Description = child.Type.Description,
+                            Name = child.Type.Name,
+                        },
+                        ResolveAt = child.ResolveAt,
+                        Labels = child.IssueLabels.Select(issueLabel => new LabelViewModel
+                        {
+                            Id = issueLabel.Label.Id,
+                            Name = issueLabel.Label.Name,
+                            ProjectId = issueLabel.Label.ProjectId,
+                        }).ToList(),
+                    }).ToList(),
+                    Links = issue.Links.Select(link => new LinkViewModel
+                    {
+                        Id = link.Id,
+                        Description = link.Description!,
+                        IssueId = link.IssueId,
+                        Url = link.Url
+                    }).ToList(),
+                    Comments = issue.Comments.Select(comment => new CommentViewModel
+                    {
+                        Id = comment.Id,
+                        Content = comment.Content,
+                        CreateAt = comment.CreateAt,
+                        User = new UserViewModel
+                        {
+                            Id = comment.User.Id,
+                            Email = comment.User.Email,
+                            Name = comment.User.Name,
+                            Username = comment.User.Username
+                        },
+                        IssueId = comment.IssueId
+                    }).ToList(),
                     Assignee = issue.Assignee != null ? new UserViewModel
                     {
                         Id = issue.Assignee.Id,
@@ -130,7 +237,12 @@ namespace Service.Implementations
                         Username = issue.Reporter.Username
                     },
                     StatusId = issue.StatusId,
-                    TypeId = issue.TypeId,
+                    Type = new TypeViewModel
+                    {
+                        Id = issue.Type.Id,
+                        Description = issue.Type.Description,
+                        Name = issue.Type.Name,
+                    },
                     ResolveAt = issue.ResolveAt,
                     Labels = issue.IssueLabels.Select(issueLabel => new LabelViewModel
                     {
@@ -156,6 +268,113 @@ namespace Service.Implementations
                     Name = issue.Name,
                     EstimateTime = issue.EstimateTime,
                     DueDate = issue.DueDate,
+                    ChildIssues = issue.InverseParent.Select(child => new ChildIssueViewModel
+                    {
+                        Id = child.Id,
+                        CreateAt = child.CreateAt,
+                        UpdateAt = child.UpdateAt,
+                        Position = child.Position,
+                        Description = child.Description,
+                        IsClose = child.IsClose,
+                        IsChild = child.IsChild,
+                        Name = child.Name,
+                        Comments = child.Comments.Select(comment => new CommentViewModel
+                        {
+                            Id = comment.Id,
+                            Content = comment.Content,
+                            CreateAt = comment.CreateAt,
+                            User = new UserViewModel
+                            {
+                                Id = comment.User.Id,
+                                Email = comment.User.Email,
+                                Name = comment.User.Name,
+                                Username = comment.User.Username
+                            },
+                            IssueId = comment.IssueId
+                        }).ToList(),
+                        Assignee = child.Assignee != null ? new UserViewModel
+                        {
+                            Id = child.Assignee.Id,
+                            Email = child.Assignee.Email,
+                            Name = child.Assignee.Name,
+                            Username = child.Assignee.Username
+                        } : null!,
+                        ProjectId = child.Project.Id,
+                        Reporter = new UserViewModel
+                        {
+                            Id = child.Reporter.Id,
+                            Email = child.Reporter.Email,
+                            Name = child.Reporter.Name,
+                            Username = child.Reporter.Username
+                        },
+                        Priority = new PriorityViewModel
+                        {
+                            Id = child.Priority.Id,
+                            Description = child.Priority.Description,
+                            Name = child.Priority.Name,
+                            Value = child.Priority.Value
+                        },
+                        Status = new StatusViewModel
+                        {
+                            Id = child.Status.Id,
+                            Name = child.Status.Name,
+                            Description = child.Status.Description,
+                            IsFirst = child.Status.IsFirst,
+                            IsLast = child.Status.IsLast,
+                            Limit = child.Status.Limit,
+                            Position = child.Status.Position
+                        },
+                        Type = new TypeViewModel
+                        {
+                            Id = child.Type.Id,
+                            Description = child.Type.Description,
+                            Name = child.Type.Name,
+                        },
+                        ResolveAt = child.ResolveAt,
+                        Labels = child.IssueLabels.Select(issueLabel => new LabelViewModel
+                        {
+                            Id = issueLabel.Label.Id,
+                            Name = issueLabel.Label.Name,
+                            ProjectId = issueLabel.Label.ProjectId,
+                        }).ToList(),
+                    }).ToList(),
+                    Comments = issue.Comments.Select(comment => new CommentViewModel
+                    {
+                        Id = comment.Id,
+                        Content = comment.Content,
+                        CreateAt = comment.CreateAt,
+                        User = new UserViewModel
+                        {
+                            Id = comment.User.Id,
+                            Email = comment.User.Email,
+                            Name = comment.User.Name,
+                            Username = comment.User.Username
+                        },
+                        IssueId = comment.IssueId
+                    }).ToList(),
+                    LogWorks = issue.LogWorks.Select(logWork => new LogWorkViewModel
+                    {
+                        Id = logWork.Id,
+                        Description = logWork.Description,
+                        IssueId = logWork.IssueId,
+                        RemainingTime = logWork.RemainingTime,
+                        SpentTime = logWork.SpentTime,
+                        CreateAt = logWork.CreateAt,
+                        User = new UserViewModel
+                        {
+                            Id = logWork.User.Id,
+                            Email = logWork.User.Email,
+                            Name = logWork.User.Name,
+                            Username = logWork.User.Username
+                        },
+                    }).ToList(),
+                    Links = issue.Links.Select(link => new LinkViewModel
+                    {
+                        Id = link.Id,
+                        Description = link.Description!,
+                        IssueId = link.IssueId,
+                        Url = link.Url
+                    }).ToList(),
                     Assignee = issue.Assignee != null ? new UserViewModel
                     {
                         Id = issue.Assignee.Id,
@@ -173,7 +392,12 @@ namespace Service.Implementations
                         Username = issue.Reporter.Username
                     },
                     StatusId = issue.StatusId,
-                    TypeId = issue.TypeId,
+                    Type = new TypeViewModel
+                    {
+                        Id = issue.Type.Id,
+                        Description = issue.Type.Description,
+                        Name = issue.Type.Name,
+                    },
                     Position = issue.Position,
                     ResolveAt = issue.ResolveAt,
                     Labels = issue.IssueLabels.Select(issueLabel => new LabelViewModel
@@ -215,7 +439,12 @@ namespace Service.Implementations
                         Username = issue.Reporter.Username
                     },
                     StatusId = issue.StatusId,
-                    TypeId = issue.TypeId,
+                    Type = new TypeViewModel
+                    {
+                        Id = issue.Type.Id,
+                        Description = issue.Type.Description,
+                        Name = issue.Type.Name,
+                    },
                     Position = issue.Position,
                     ResolveAt = issue.ResolveAt,
                     Labels = issue.IssueLabels.Select(issueLabel => new LabelViewModel
@@ -255,7 +484,7 @@ namespace Service.Implementations
                 if (model.PriorityId != null) issue.PriorityId = (Guid)model.PriorityId;
                 if (model.TypeId != null) issue.TypeId = (Guid)model.TypeId;
                 issue.AssigneeId = model.AssigneeId;
-                if (model.EstimateTime != null) issue.EstimateTime = (int)model.EstimateTime;
+                issue.EstimateTime = model.EstimateTime;
                 if (model.ReporterId != null) issue.ReporterId = (Guid)model.ReporterId;
                 if (model.Labels != null || model.Labels != null && model.Labels.Count > 0)
                 {
@@ -295,7 +524,20 @@ namespace Service.Implementations
                 {
                     var issue = await _issueRepository.GetMany(issue => issue.Id.Equals(model.Id))
                         .Include(issue => issue.Project)
+                        .Include(issue => issue.Type)
+                        .Include(issue => issue.Priority)
+                        .Include(issue => issue.LogWorks).ThenInclude(logWork => logWork.User)
+                        .Include(issue => issue.Comments).ThenInclude(comment => comment.User)
+                        .Include(issue => issue.Assignee).ThenInclude(user => user!.Roles)
                         .Include(issue => issue.IssueLabels).ThenInclude(issueLabel => issueLabel.Label)
+
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Project)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Type)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Priority)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.LogWorks).ThenInclude(logWork => logWork.User)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Comments).ThenInclude(comment => comment.User)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Assignee).ThenInclude(user => user!.Roles)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.IssueLabels).ThenInclude(issueLabel => issueLabel.Label)
                         .FirstOrDefaultAsync();
                     if (issue != null)
                     {
@@ -343,6 +585,113 @@ namespace Service.Implementations
                         Name = issue.Name,
                         EstimateTime = issue.EstimateTime,
                         DueDate = issue.DueDate,
+                        ChildIssues = issue.InverseParent.Select(child => new ChildIssueViewModel
+                        {
+                            Id = child.Id,
+                            CreateAt = child.CreateAt,
+                            UpdateAt = child.UpdateAt,
+                            Position = child.Position,
+                            Description = child.Description,
+                            IsClose = child.IsClose,
+                            IsChild = child.IsChild,
+                            Name = child.Name,
+                            Comments = child.Comments.Select(comment => new CommentViewModel
+                            {
+                                Id = comment.Id,
+                                Content = comment.Content,
+                                CreateAt = comment.CreateAt,
+                                User = new UserViewModel
+                                {
+                                    Id = comment.User.Id,
+                                    Email = comment.User.Email,
+                                    Name = comment.User.Name,
+                                    Username = comment.User.Username
+                                },
+                                IssueId = comment.IssueId
+                            }).ToList(),
+                            Assignee = child.Assignee != null ? new UserViewModel
+                            {
+                                Id = child.Assignee.Id,
+                                Email = child.Assignee.Email,
+                                Name = child.Assignee.Name,
+                                Username = child.Assignee.Username
+                            } : null!,
+                            ProjectId = child.Project.Id,
+                            Reporter = new UserViewModel
+                            {
+                                Id = child.Reporter.Id,
+                                Email = child.Reporter.Email,
+                                Name = child.Reporter.Name,
+                                Username = child.Reporter.Username
+                            },
+                            Priority = new PriorityViewModel
+                            {
+                                Id = child.Priority.Id,
+                                Description = child.Priority.Description,
+                                Name = child.Priority.Name,
+                                Value = child.Priority.Value
+                            },
+                            Status = new StatusViewModel
+                            {
+                                Id = child.Status.Id,
+                                Name = child.Status.Name,
+                                Description = child.Status.Description,
+                                IsFirst = child.Status.IsFirst,
+                                IsLast = child.Status.IsLast,
+                                Limit = child.Status.Limit,
+                                Position = child.Status.Position
+                            },
+                            Type = new TypeViewModel
+                            {
+                                Id = child.Type.Id,
+                                Description = child.Type.Description,
+                                Name = child.Type.Name,
+                            },
+                            ResolveAt = child.ResolveAt,
+                            Labels = child.IssueLabels.Select(issueLabel => new LabelViewModel
+                            {
+                                Id = issueLabel.Label.Id,
+                                Name = issueLabel.Label.Name,
+                                ProjectId = issueLabel.Label.ProjectId,
+                            }).ToList(),
+                        }).ToList(),
+                        Comments = issue.Comments.Select(comment => new CommentViewModel
+                        {
+                            Id = comment.Id,
+                            Content = comment.Content,
+                            CreateAt = comment.CreateAt,
+                            User = new UserViewModel
+                            {
+                                Id = comment.User.Id,
+                                Email = comment.User.Email,
+                                Name = comment.User.Name,
+                                Username = comment.User.Username
+                            },
+                            IssueId = comment.IssueId
+                        }).ToList(),
+                        LogWorks = issue.LogWorks.Select(logWork => new LogWorkViewModel
+                        {
+                            Id = logWork.Id,
+                            Description = logWork.Description,
+                            IssueId = logWork.IssueId,
+                            RemainingTime = logWork.RemainingTime,
+                            SpentTime = logWork.SpentTime,
+                            CreateAt = logWork.CreateAt,
+                            User = new UserViewModel
+                            {
+                                Id = logWork.User.Id,
+                                Email = logWork.User.Email,
+                                Name = logWork.User.Name,
+                                Username = logWork.User.Username
+                            },
+                        }).ToList(),
+                        Links = issue.Links.Select(link => new LinkViewModel
+                        {
+                            Id = link.Id,
+                            Description = link.Description!,
+                            IssueId = link.IssueId,
+                            Url = link.Url
+                        }).ToList(),
                         Assignee = issue.Assignee != null ? new UserViewModel
                         {
                             Id = issue.Assignee.Id,
@@ -361,7 +710,12 @@ namespace Service.Implementations
                             Username = issue.Reporter.Username
                         } : null!,
                         StatusId = issue.StatusId,
-                        TypeId = issue.TypeId,
+                        Type = new TypeViewModel
+                        {
+                            Id = issue.Type.Id,
+                            Description = issue.Type.Description,
+                            Name = issue.Type.Name,
+                        },
                         ResolveAt = issue.ResolveAt,
                         Labels = issue.IssueLabels.Select(issueLabel => new LabelViewModel
                         {
@@ -386,7 +740,7 @@ namespace Service.Implementations
                     .Include(childIssue => childIssue.IssueLabels).ToListAsync();
 
                 issue.Project.LastActivity = DateTime.Now;
-                foreach(var childIssue in childIssues)
+                foreach (var childIssue in childIssues)
                 {
                     _issueLabelRepository.RemoveRange(childIssue.IssueLabels);
                 }

@@ -18,6 +18,9 @@ namespace Application.Configurations
             services.AddScoped<IPriorityService, PriorityService>();
             services.AddScoped<ITypeService, TypeService>();
             services.AddScoped<ILabelService, LabelService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<ILinkService, LinkService>();
+            services.AddScoped<ILogWorkService, LogWorkService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }

@@ -62,7 +62,12 @@ namespace Service.Implementations
                             Username = issue.Reporter.Username
                         },
                         StatusId = issue.StatusId,
-                        TypeId = issue.TypeId,
+                        Type = new TypeViewModel
+                        {
+                            Id = issue.Type.Id,
+                            Description = issue.Type.Description,
+                            Name = issue.Type.Name,
+                        },
                         ResolveAt = issue.ResolveAt,
                         Labels = issue.IssueLabels.Select(issueLabel => new LabelViewModel
                         {
@@ -116,7 +121,12 @@ namespace Service.Implementations
                             Username = issue.Reporter.Username
                         },
                         StatusId = issue.StatusId,
-                        TypeId = issue.TypeId,
+                        Type = new TypeViewModel
+                        {
+                            Id = issue.Type.Id,
+                            Description = issue.Type.Description,
+                            Name = issue.Type.Name,
+                        },
                         Labels = issue.IssueLabels.Select(issueLabel => new LabelViewModel
                         {
                             Id = issueLabel.Label.Id,
@@ -248,7 +258,12 @@ namespace Service.Implementations
                                 Username = issue.Reporter.Username
                             },
                             StatusId = issue.StatusId,
-                            TypeId = issue.TypeId,
+                            Type = new TypeViewModel
+                            {
+                                Id = issue.Type.Id,
+                                Description = issue.Type.Description,
+                                Name = issue.Type.Name,
+                            },
                             ResolveAt = issue.ResolveAt,
                             Labels = issue.IssueLabels.Select(issueLabel => new LabelViewModel
                             {

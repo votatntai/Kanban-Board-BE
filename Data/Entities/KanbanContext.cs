@@ -193,17 +193,19 @@ namespace Data.Entities
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Description).HasMaxLength(256);
+
                 entity.HasOne(d => d.Issue)
                     .WithMany(p => p.LogWorks)
                     .HasForeignKey(d => d.IssueId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__LogWork__IssueId__75A278F5");
+                    .HasConstraintName("FK__LogWork__IssueId__02FC7413");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.LogWorks)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__LogWork__UserId__76969D2E");
+                    .HasConstraintName("FK__LogWork__UserId__03F0984C");
             });
 
             modelBuilder.Entity<Priority>(entity =>

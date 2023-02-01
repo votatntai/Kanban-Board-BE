@@ -139,5 +139,7 @@ Create Table [LogWork] (
 	IssueId uniqueidentifier foreign key references [Issue](Id) not null,
 	UserId uniqueidentifier foreign key references [User](Id) not null,
 	SpentTime int not null,
-	RemainingTime int not null
+	Description nvarchar(256),
+	RemainingTime int not null,
+	CreateAt datetime default  getdate(),
 )
