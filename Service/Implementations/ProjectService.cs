@@ -1,5 +1,6 @@
 ﻿using Data;
 using Data.Entities;
+using Data.Models.Internal;
 using Data.Models.Requests.Create;
 using Data.Models.Requests.Update;
 using Data.Models.Views;
@@ -378,10 +379,10 @@ namespace Service.Implementations
                 }).FirstOrDefaultAsync() ?? null!;
         }
 
-        public async Task<ICollection<ProjectViewModel>> GetProjects(string? name)
+        public async Task<ICollection<ProjectViewModel>> GetProjects(AuthModel user, string? name)
         {
             return await _projectRepository
-                .GetMany(project => project.Name.Contains(name ?? ""))
+                .GetMany(project => project.Name.Contains(name ?? "") && project.ProjectMembers.Any(x => x.UserId.Equals(user.Id)))
                 .Include(project => project.Statuses).ThenInclude(status => status.Issues)
                 .ThenInclude(issue => issue.Project)
                 .Include(project => project.Issues).ThenInclude(issue => issue.IssueLabels)

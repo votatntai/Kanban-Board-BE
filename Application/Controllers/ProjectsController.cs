@@ -22,12 +22,13 @@ namespace Application.Controllers
             _projectService = projectService;
         }
         [HttpGet]
+        //[Authorize]
         [ProducesResponseType(typeof(ICollection<ProjectViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ICollection<ProjectViewModel>>>
-                              GetProjects([FromQuery] string? name)
+        public async Task<ActionResult<ICollection<ProjectViewModel>>> GetProjects([FromQuery] string? name)
         {
-            var projects = await _projectService.GetProjects(name);
+            var user = (AuthModel?)HttpContext.Items["User"];
+            var projects = await _projectService.GetProjects(user!, name);
             if (projects.Any())
             {
                 return Ok(projects);

@@ -72,9 +72,9 @@ namespace Application.Controllers
 
         [HttpPost]
         [Route("child")]
-        [ProducesResponseType(typeof(IssueViewModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ChildIssueViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IssueViewModel>> CreateChildIssue([FromBody] CreateIssueRequestModel issue)
+        public async Task<ActionResult<ChildIssueViewModel>> CreateChildIssue([FromBody] CreateChildIssueRequestModel issue)
         {
             if (issue is null)
             {

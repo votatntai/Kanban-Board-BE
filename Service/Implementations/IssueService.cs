@@ -3,6 +3,7 @@ using Data.Entities;
 using Data.Models.Requests.Create;
 using Data.Models.Requests.Update;
 using Data.Models.Views;
+using Data.Repositories.Implementations;
 using Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
@@ -15,10 +16,15 @@ namespace Service.Implementations
         private readonly IProjectRepository _projectRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly IPriorityRepository _priorityRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly ILogWorkRepository _logWorkRepository;
+
         private readonly IIssueLabelRepository _issueLabelRepository;
 
         public IssueService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
+            _commentRepository = unitOfWork.Comment;
+            _logWorkRepository = unitOfWork.LogWork;
             _issueRepository = unitOfWork.Issue;
             _projectRepository = unitOfWork.Project;
             _priorityRepository = unitOfWork.Priority;
@@ -26,7 +32,7 @@ namespace Service.Implementations
             _statusRepository = unitOfWork.Status;
         }
 
-        public async Task<IssueViewModel> CreateChildIssue(CreateIssueRequestModel model)
+        public async Task<ChildIssueViewModel> CreateChildIssue(CreateChildIssueRequestModel model)
         {
             var id = Guid.NewGuid();
             var project = await _projectRepository.GetMany(project => project.Id.Equals(model.ProjectId))
@@ -41,8 +47,8 @@ namespace Service.Implementations
                 CreateAt = DateTime.Now,
                 IsChild = true,
                 IsClose = false,
+                ParentId = model.ParentId,
                 AssigneeId = model.AssigneeId != null ? model.AssigneeId : null!,
-                Position = model.Position,
                 ProjectId = model.ProjectId,
                 PriorityId = priority!.Id,
                 TypeId = project!.Types.Where(type => type.Name.Equals("SubTask")).Select(type => type.Id).FirstOrDefault(),
@@ -55,11 +61,79 @@ namespace Service.Implementations
             var result = await _unitOfWork.SaveChanges();
             if (result > 0)
             {
-                return await GetIssue(id);
+                return await _issueRepository.GetMany(issue => issue.Id.Equals(id)).Select(child => new ChildIssueViewModel
+                {
+                    Id = child.Id,
+                    CreateAt = child.CreateAt,
+                    UpdateAt = child.UpdateAt,
+                    Position = child.Position,
+                    Description = child.Description,
+                    IsClose = child.IsClose,
+                    IsChild = child.IsChild,
+                    Name = child.Name,
+                    Comments = child.Comments.Select(comment => new CommentViewModel
+                    {
+                        Id = comment.Id,
+                        Content = comment.Content,
+                        CreateAt = comment.CreateAt,
+                        User = new UserViewModel
+                        {
+                            Id = comment.User.Id,
+                            Email = comment.User.Email,
+                            Name = comment.User.Name,
+                            Username = comment.User.Username
+                        },
+                        IssueId = comment.IssueId
+                    }).ToList(),
+                    Assignee = child.Assignee != null ? new UserViewModel
+                    {
+                        Id = child.Assignee.Id,
+                        Email = child.Assignee.Email,
+                        Name = child.Assignee.Name,
+                        Username = child.Assignee.Username
+                    } : null!,
+                    ProjectId = child.Project.Id,
+                    Reporter = new UserViewModel
+                    {
+                        Id = child.Reporter.Id,
+                        Email = child.Reporter.Email,
+                        Name = child.Reporter.Name,
+                        Username = child.Reporter.Username
+                    },
+                    Priority = new PriorityViewModel
+                    {
+                        Id = child.Priority.Id,
+                        Description = child.Priority.Description,
+                        Name = child.Priority.Name,
+                        Value = child.Priority.Value
+                    },
+                    Status = new StatusViewModel
+                    {
+                        Id = child.Status.Id,
+                        Name = child.Status.Name,
+                        Description = child.Status.Description,
+                        IsFirst = child.Status.IsFirst,
+                        IsLast = child.Status.IsLast,
+                        Limit = child.Status.Limit,
+                        Position = child.Status.Position
+                    },
+                    Type = new TypeViewModel
+                    {
+                        Id = child.Type.Id,
+                        Description = child.Type.Description,
+                        Name = child.Type.Name,
+                    },
+                    ResolveAt = child.ResolveAt,
+                    Labels = child.IssueLabels.Select(issueLabel => new LabelViewModel
+                    {
+                        Id = issueLabel.Label.Id,
+                        Name = issueLabel.Label.Name,
+                        ProjectId = issueLabel.Label.ProjectId,
+                    }).ToList(),
+                }).FirstOrDefaultAsync() ?? null!;
             }
             return null!;
         }
-
 
         public async Task<IssueViewModel> CreateIssue(CreateIssueRequestModel model)
         {
@@ -744,9 +818,15 @@ namespace Service.Implementations
                 {
                     _issueLabelRepository.RemoveRange(childIssue.IssueLabels);
                 }
+
+                var comments = await _commentRepository.GetMany(comment => comment.IssueId.Equals(issue.Id)).ToListAsync();
+                var logWorks = await _logWorkRepository.GetMany(logWork => logWork.IssueId.Equals(issue.Id)).ToListAsync();
+
                 _issueLabelRepository.RemoveRange(issue.IssueLabels);
                 _issueRepository.Update(issue);
                 _issueRepository.RemoveRange(childIssues);
+                _commentRepository.RemoveRange(comments);
+                _logWorkRepository.RemoveRange(logWorks);
                 _issueRepository.Remove(issue);
                 result = await _unitOfWork.SaveChanges() > 0;
             }
