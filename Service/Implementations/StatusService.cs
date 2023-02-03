@@ -203,6 +203,9 @@ namespace Service.Implementations
                     var status = await _statusRepository.GetMany(status => status.Id.Equals(model.Id))
                         .Include(status => status.Project)
                         .Include(status => status.Issues).ThenInclude(issue => issue.Project)
+                        .Include(status => status.Issues).ThenInclude(issue => issue.Type)
+                        .Include(status => status.Issues).ThenInclude(issue => issue.Reporter)
+                        .Include(status => status.Issues).ThenInclude(issue => issue.Assignee)
                         .Include(status => status.Issues).ThenInclude(issue => issue.IssueLabels).ThenInclude(issueLabel => issueLabel.Label)
                         .FirstOrDefaultAsync();
                     if (status != null)

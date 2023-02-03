@@ -142,6 +142,32 @@ namespace Application.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("child/{id}")]
+        [ProducesResponseType(typeof(ChildIssueViewModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ChildIssueViewModel>>
+         UpdatedeChildIssue([FromRoute] Guid id, [FromBody] UpdateChildIssueRequestModel issue)
+        {
+            if (issue is null)
+            {
+                return BadRequest(new());
+            }
+            try
+            {
+                var result = await _issueService.UpdateChildIssue(id, issue);
+                if (result is not null)
+                {
+                    return StatusCode(StatusCodes.Status201Created, result);
+                }
+                return BadRequest();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception);
+            }
+        }
+
         [HttpDelete]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

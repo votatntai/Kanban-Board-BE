@@ -90,6 +90,28 @@ namespace Application.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("member")]
+        [ProducesResponseType(typeof(ProjectViewModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ProjectViewModel>>
+        UpdatedeProject(Guid memberId, Guid projectId)
+        {
+            try
+            {
+                var result = await _projectService.RemoveMember(memberId, projectId);
+                if (result)
+                {
+                    return Ok(result);
+                }
+                return BadRequest();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception);
+            }
+        }
+
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(typeof(ProjectViewModel), StatusCodes.Status201Created)]

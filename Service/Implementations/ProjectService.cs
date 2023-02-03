@@ -168,6 +168,20 @@ namespace Service.Implementations
             return null!;
         }
 
+        public async Task<bool> RemoveMember(Guid memberId, Guid projectId)
+        {
+            var result = false;
+            var member = await _projectMemberRepository
+                .GetMany(member => member.UserId.Equals(memberId) && member.ProjectId.Equals(projectId))
+                .FirstOrDefaultAsync();
+            if(member != null)
+            {
+                _projectMemberRepository.Remove(member);
+                result = await _unitOfWork.SaveChanges() > 0;
+            }
+            return result;
+        }
+
         public async Task<ProjectViewModel> GetProject(Guid id)
         {
             return await _projectRepository.GetMany(project => project.Id.Equals(id))

@@ -18,7 +18,7 @@
         public DateTime? ResolveAt { get; set; }
         public ICollection<LabelViewModel> Labels { get; set; } = null!;
         public ICollection<CommentViewModel> Comments { get; set; } = null!;
-        public ICollection<LogWorkViewModel> LogWorks { get; set; } = null!;
+        public ICollection<LinkViewModel> Links { get; set; } = null!;
         public bool IsClose { get; set; }
     }
 }
