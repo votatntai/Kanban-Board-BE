@@ -20,6 +20,7 @@ namespace Data
         private ITypeRepository _type = null!;
         private ILinkRepository _link = null!;
         private ILogWorkRepository _logWork = null!;
+        private IAttachmentRepository _attachment = null!;
 
         public UnitOfWork(KanbanContext context)
         {
@@ -72,6 +73,10 @@ namespace Data
         public ILogWorkRepository LogWork
         {
             get { return _logWork ??= new LogWorkRepository(_context); }
+        }
+        public IAttachmentRepository Attachment
+        {
+            get { return _attachment ??= new AttachmentRepository(_context); }
         }
 
         public async Task<int> SaveChanges()

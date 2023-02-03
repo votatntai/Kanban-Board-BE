@@ -118,6 +118,13 @@ namespace Service.Implementations
                     Name = issue.Name,
                     EstimateTime = issue.EstimateTime,
                     DueDate = issue.DueDate,
+                    Attachments = issue.Attachments.Select(attachment => new AttachmentViewModel
+                    {
+                        Id = attachment.Id,
+                        Url = attachment.Url,
+                        IssueId = attachment.Id,
+                        Name = attachment.Name,
+                    }).ToList(),
                     LogWorks = issue.LogWorks.Select(logWork => new LogWorkViewModel
                     {
                         Id = logWork.Id,
@@ -144,6 +151,20 @@ namespace Service.Implementations
                         IsClose = child.IsClose,
                         IsChild = child.IsChild,
                         Name = child.Name,
+                        Attachments = child.Attachments.Select(attachment => new AttachmentViewModel
+                        {
+                            Id = attachment.Id,
+                            Url = attachment.Url,
+                            IssueId = attachment.Id,
+                            Name = attachment.Name,
+                        }).ToList(),
+                        Links = child.Links.Select(link => new LinkViewModel
+                        {
+                            Id = link.Id,
+                            Description = link.Description!,
+                            IssueId = link.IssueId,
+                            Url = link.Url
+                        }).ToList(),
                         Comments = child.Comments.Select(comment => new CommentViewModel
                         {
                             Id = comment.Id,
@@ -270,6 +291,13 @@ namespace Service.Implementations
                 IsClose = child.IsClose,
                 IsChild = child.IsChild,
                 Name = child.Name,
+                Attachments = child.Attachments.Select(attachment => new AttachmentViewModel
+                {
+                    Id = attachment.Id,
+                    Url = attachment.Url,
+                    IssueId = attachment.Id,
+                    Name = attachment.Name,
+                }).ToList(),
                 Comments = child.Comments.Select(comment => new CommentViewModel
                 {
                     Id = comment.Id,
@@ -353,6 +381,13 @@ namespace Service.Implementations
                     IsChild = issue.IsChild,
                     IsClose = issue.IsClose,
                     Name = issue.Name,
+                    Attachments = issue.Attachments.Select(attachment => new AttachmentViewModel
+                    {
+                        Id = attachment.Id,
+                        Url = attachment.Url,
+                        IssueId = attachment.Id,
+                        Name = attachment.Name,
+                    }).ToList(),
                     EstimateTime = issue.EstimateTime,
                     DueDate = issue.DueDate,
                     ChildIssues = issue.InverseParent.Select(child => new ChildIssueViewModel
@@ -361,6 +396,20 @@ namespace Service.Implementations
                         CreateAt = child.CreateAt,
                         UpdateAt = child.UpdateAt,
                         Position = child.Position,
+                        Attachments = child.Attachments.Select(attachment => new AttachmentViewModel
+                        {
+                            Id = attachment.Id,
+                            Url = attachment.Url,
+                            IssueId = attachment.Id,
+                            Name = attachment.Name,
+                        }).ToList(),
+                        Links = child.Links.Select(link => new LinkViewModel
+                        {
+                            Id = link.Id,
+                            Description = link.Description!,
+                            IssueId = link.IssueId,
+                            Url = link.Url
+                        }).ToList(),
                         Description = child.Description,
                         IsClose = child.IsClose,
                         IsChild = child.IsChild,
@@ -675,12 +724,14 @@ namespace Service.Implementations
                         .Include(issue => issue.Comments).ThenInclude(comment => comment.User)
                         .Include(issue => issue.Assignee).ThenInclude(user => user!.Roles)
                         .Include(issue => issue.IssueLabels).ThenInclude(issueLabel => issueLabel.Label)
+                        .Include(issues => issues.Attachments)
 
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Project)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Type)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Reporter)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Priority)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Status)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Attachments)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.LogWorks).ThenInclude(logWork => logWork.User)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Comments).ThenInclude(comment => comment.User)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Assignee).ThenInclude(user => user!.Roles)
@@ -740,6 +791,20 @@ namespace Service.Implementations
                             Position = child.Position,
                             Description = child.Description,
                             IsClose = child.IsClose,
+                            Links = child.Links.Select(link => new LinkViewModel
+                            {
+                                Description = link.Description,
+                                Id = link.Id,
+                                IssueId = link.Id,
+                                Url = link.Url,
+                            }).ToList(),
+                            Attachments = child.Attachments.Select(attachment => new AttachmentViewModel
+                            {
+                                Id= attachment.Id,
+                                Url= attachment.Url,
+                                IssueId= attachment.Id,
+                                Name= attachment.Name,
+                            }).ToList(),
                             IsChild = child.IsChild,
                             Name = child.Name,
                             Comments = child.Comments.Select(comment => new CommentViewModel

@@ -21,6 +21,7 @@ namespace Application.Configurations
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<ILinkService, LinkService>();
             services.AddScoped<ILogWorkService, LogWorkService>();
+            services.AddScoped<IAttachmentService, AttachmentService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }

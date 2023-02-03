@@ -16,6 +16,7 @@ namespace Data
         public ITypeRepository Type { get; }
         public ILinkRepository Link { get; }
         public ILogWorkRepository LogWork { get; }
+        public IAttachmentRepository Attachment { get; }
 
         Task<int> SaveChanges();
     }

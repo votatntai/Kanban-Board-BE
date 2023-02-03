@@ -230,6 +230,13 @@ namespace Service.Implementations
                             Description = issue.Description,
                             CreateAt = issue.CreateAt,
                             DueDate = issue.DueDate,
+                            Attachments = issue.Attachments.Select(attachment => new AttachmentViewModel
+                            {
+                                Id = attachment.Id,
+                                Name = attachment.Name,
+                                IssueId = attachment.Id,
+                                Url = attachment.Url,
+                            }).ToList(),
                             LogWorks = issue.LogWorks.Select(logWork => new LogWorkViewModel
                             {
                                 Id = logWork.Id,
@@ -401,6 +408,7 @@ namespace Service.Implementations
                 .ThenInclude(issue => issue.Project)
                 .Include(project => project.Issues).ThenInclude(issue => issue.IssueLabels)
                 .ThenInclude(issueLabel => issueLabel.Label)
+                .Include(project => project.Issues).ThenInclude(issue => issue.Attachments)
                 .OrderByDescending(project => project.LastActivity)
                 .OrderBy(project => project.IsClose)
                 .Select(project => new ProjectViewModel
@@ -447,6 +455,13 @@ namespace Service.Implementations
                             Description = issue.Description,
                             CreateAt = issue.CreateAt,
                             DueDate = issue.DueDate,
+                            Attachments = issue.Attachments.Select(attachment => new AttachmentViewModel
+                            {
+                                Id= attachment.Id,
+                                Name = attachment.Name,
+                                IssueId= attachment.Id,
+                                Url= attachment.Url,
+                            }).ToList(),
                             LogWorks = issue.LogWorks.Select(logWork => new LogWorkViewModel
                             {
                                 Id = logWork.Id,
