@@ -402,6 +402,7 @@ namespace Service.Implementations
                 .Include(project => project.Issues).ThenInclude(issue => issue.IssueLabels)
                 .ThenInclude(issueLabel => issueLabel.Label)
                 .OrderByDescending(project => project.LastActivity)
+                .OrderBy(project => project.IsClose)
                 .Select(project => new ProjectViewModel
                 {
                     Id = project.Id,
