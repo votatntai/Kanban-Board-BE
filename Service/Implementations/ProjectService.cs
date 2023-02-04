@@ -281,6 +281,20 @@ namespace Service.Implementations
                                 Description = issue.Description,
                                 CreateAt = issue.CreateAt,
                                 IsClose = issue.IsClose,
+                                Attachments = issue.Attachments.Select(attachment => new AttachmentViewModel
+                                {
+                                    Id = attachment.Id,
+                                    Url = attachment.Url,
+                                    IssueId = attachment.Id,
+                                    Name = attachment.Name,
+                                }).ToList(),
+                                Links = issue.Links.Select(link => new LinkViewModel
+                                {
+                                    Description = link.Description,
+                                    Id = link.Id,
+                                    IssueId = link.Id,
+                                    Url = link.Url,
+                                }).ToList(),
                                 IsChild = issue.IsChild,
                                 UpdateAt = issue.UpdateAt,
                                 Comments = issue.Comments.Select(comment => new CommentViewModel
@@ -493,6 +507,20 @@ namespace Service.Implementations
                                 Description = child.Description,
                                 IsClose = child.IsClose,
                                 IsChild = child.IsChild,
+                                Attachments = issue.Attachments.Select(attachment => new AttachmentViewModel
+                                {
+                                    Id = attachment.Id,
+                                    Url = attachment.Url,
+                                    IssueId = attachment.Id,
+                                    Name = attachment.Name,
+                                }).ToList(),
+                                Links = issue.Links.Select(link => new LinkViewModel
+                                {
+                                    Description = link.Description,
+                                    Id = link.Id,
+                                    IssueId = link.Id,
+                                    Url = link.Url,
+                                }).ToList(),
                                 Name = child.Name,
                                 Comments = child.Comments.Select(comment => new CommentViewModel
                                 {

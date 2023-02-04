@@ -17,6 +17,7 @@ namespace Service.Implementations
         private readonly IStatusRepository _statusRepository;
         private readonly IPriorityRepository _priorityRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly IAttachmentRepository _attachmentRepository;
         private readonly ILogWorkRepository _logWorkRepository;
 
         private readonly IIssueLabelRepository _issueLabelRepository;
@@ -30,6 +31,7 @@ namespace Service.Implementations
             _priorityRepository = unitOfWork.Priority;
             _issueLabelRepository = unitOfWork.IssueLabel;
             _statusRepository = unitOfWork.Status;
+            _attachmentRepository = unitOfWork.Attachment;
         }
 
         public async Task<ChildIssueViewModel> CreateChildIssue(CreateChildIssueRequestModel model)
@@ -737,21 +739,22 @@ namespace Service.Implementations
                         .Include(issue => issue.Type)
                         .Include(issue => issue.Status)
                         .Include(issue => issue.Priority)
+                        .Include(issue => issue.InverseParent)
                         .Include(issue => issue.Reporter)
+                        .Include(issue => issue.Attachments)
                         .Include(issue => issue.LogWorks).ThenInclude(logWork => logWork.User)
                         .Include(issue => issue.Comments).ThenInclude(comment => comment.User)
                         .Include(issue => issue.Assignee).ThenInclude(user => user!.Roles)
                         .Include(issue => issue.IssueLabels).ThenInclude(issueLabel => issueLabel.Label)
-                        .Include(issues => issues.Attachments)
 
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Project)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Type)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Reporter)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Priority)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Status)
-                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Attachments)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.LogWorks).ThenInclude(logWork => logWork.User)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Comments).ThenInclude(comment => comment.User)
+                        .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Attachments)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.Assignee).ThenInclude(user => user!.Roles)
                         .Include(issue => issue.InverseParent).ThenInclude(parent => parent.IssueLabels).ThenInclude(issueLabel => issueLabel.Label)
                         .FirstOrDefaultAsync();
@@ -801,6 +804,13 @@ namespace Service.Implementations
                         Name = issue.Name,
                         EstimateTime = issue.EstimateTime,
                         DueDate = issue.DueDate,
+                        Attachments = issue.Attachments.Select(attachment => new AttachmentViewModel
+                        {
+                            Id = attachment.Id,
+                            Url = attachment.Url,
+                            IssueId = attachment.Id,
+                            Name = attachment.Name,
+                        }).ToList(),
                         ChildIssues = issue.InverseParent.Select(child => new ChildIssueViewModel
                         {
                             Id = child.Id,
@@ -884,7 +894,7 @@ namespace Service.Implementations
                                 Name = issueLabel.Label.Name,
                                 ProjectId = issueLabel.Label.ProjectId,
                             }).ToList(),
-                        }).ToList(),
+                        }).ToList(), 
                         Comments = issue.Comments.Select(comment => new CommentViewModel
                         {
                             Id = comment.Id,
@@ -985,12 +995,14 @@ namespace Service.Implementations
                 }
 
                 var comments = await _commentRepository.GetMany(comment => comment.IssueId.Equals(issue.Id)).ToListAsync();
+                var attachments = await _attachmentRepository.GetMany(attachment => attachment.IssueId.Equals(issue.Id)).ToListAsync();
                 var logWorks = await _logWorkRepository.GetMany(logWork => logWork.IssueId.Equals(issue.Id)).ToListAsync();
 
                 _issueLabelRepository.RemoveRange(issue.IssueLabels);
                 _issueRepository.Update(issue);
                 _issueRepository.RemoveRange(childIssues);
                 _commentRepository.RemoveRange(comments);
+                _attachmentRepository.RemoveRange(attachments);
                 _logWorkRepository.RemoveRange(logWorks);
                 _issueRepository.Remove(issue);
                 result = await _unitOfWork.SaveChanges() > 0;

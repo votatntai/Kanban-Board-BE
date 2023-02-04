@@ -74,3 +74,5 @@ C:\Users\Janglee\Desktop\Kanban\Application\bin\Debug\net6.0\Microsoft.AspNetCor
 C:\Users\Janglee\Desktop\Kanban\Application\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\Users\Janglee\Desktop\Kanban\Application\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
 C:\Users\Janglee\Desktop\Kanban\Application\bin\Debug\net6.0\Swashbuckle.AspNetCore.Newtonsoft.dll
+C:\Users\Janglee\Desktop\Kanban\Application\bin\Debug\net6.0\Microsoft.DotNet.PlatformAbstractions.dll
+C:\Users\Janglee\Desktop\Kanban\Application\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll

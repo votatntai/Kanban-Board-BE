@@ -29,10 +29,10 @@ namespace Application.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AttachmentViewModel>> GetFile(Guid id)
+        public async Task<ActionResult<byte[]>> GetFile(Guid id)
         {
-            var result = await _attachmentService.GetFile(id);
-            return Ok(result);
+            byte[] fileBytes = await _attachmentService.GetFile(id);
+            return File(fileBytes, "application/octet-stream");
         }
     }
 } 

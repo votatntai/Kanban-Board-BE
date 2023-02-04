@@ -7,6 +7,6 @@ namespace Service.Interfaces
     public interface IAttachmentService
     {
         Task<AttachmentViewModel> SaveFile(Guid issueId, IFormFile file);
-        Task<AttachmentViewModel> GetFile(Guid id);
+        Task<byte[]> GetFile(Guid id);
     }
 }
