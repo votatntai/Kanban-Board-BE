@@ -355,7 +355,13 @@ namespace Service.Implementations
                                 Name = issue.Assignee.Name,
                                 Username = issue.Assignee.Username
                             } : null!,
-                            PriorityId = issue.PriorityId,
+                            Priority = new PriorityViewModel
+                            {
+                                Id = issue.Priority.Id,
+                                Description = issue.Priority.Description,
+                                Name = issue.Priority.Name,
+                                Value = issue.Priority.Value
+                            },
                             ProjectId = issue.Project.Id,
                             Position = issue.Position,
                             ResolveAt = issue.ResolveAt,
@@ -580,7 +586,13 @@ namespace Service.Implementations
                                 Name = issue.Assignee.Name,
                                 Username = issue.Assignee.Username
                             } : null!,
-                            PriorityId = issue.PriorityId,
+                            Priority = new PriorityViewModel
+                            {
+                                Id = issue.Priority.Id,
+                                Description = issue.Priority.Description,
+                                Name = issue.Priority.Name,
+                                Value = issue.Priority.Value
+                            },
                             ProjectId = issue.Project.Id,
                             Position = issue.Position,
                             Reporter = new UserViewModel

@@ -8,7 +8,7 @@
         public bool IsChild { get; set; }
         public UserViewModel? Assignee { get; set; }
         public int? EstimateTime { get; set; }
-        public Guid? PriorityId { get; set; }
+        public PriorityViewModel Priority { get; set; } = null!;
         public Guid? StatusId { get; set; }
         public TypeViewModel Type { get; set; } = null!;
         public int Position { get; set; }
